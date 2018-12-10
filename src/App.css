@@ -1,0 +1,14 @@
+svg {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 800px;
+  height: 800px;
+  border: 1px solid black;
+}
+
+#control-panel {
+  position: relative;
+  float: right;
+  margin: 1em;
+}
