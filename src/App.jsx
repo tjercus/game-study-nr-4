@@ -28,7 +28,7 @@ import {
   MOVE_BULLETS_CMD,
   BULLET_SIZE,
   HERO_SIZE,
-  TOGGLE_RICOCHET_CMD
+  TOGGLE_RICOCHET_CMD, CREATE_WALLS_CMD
 } from "./constants";
 import uuidv4 from "uuid/v4";
 
@@ -56,6 +56,7 @@ const defaultState = {
     }
   ],
   bullets: [],
+  walls: [],
   settings: { ricochet: false }
 };
 
@@ -186,6 +187,10 @@ const makeNextState = (state = defaultState, action) => {
     updatedSettings.ricochet = !state.settings.ricochet;
     return { ...state, settings: updatedSettings };
   }
+  if (CREATE_WALLS_CMD === action.type) {
+    const updatedWalls = [{x1: 0, y1: 100, x2: 500, y2: 100}];
+    return { ...state, walls: updatedWalls};
+  }
   return state;
 };
 
@@ -199,9 +204,12 @@ class App extends Component {
     window.addEventListener("keydown", this.keyDownHandler, false);
     setInterval(() => {
       this.setState(
-        makeNextState(makeNextState(this.state, { type: MOVE_BULLETS_CMD }), {
-          type: MOVE_SNIPES_CMD
-        })
+        makeNextState(
+          makeNextState(makeNextState(this.state, { type: MOVE_BULLETS_CMD }), {
+            type: MOVE_SNIPES_CMD
+          }),
+          { type: CREATE_WALLS_CMD }
+        )
       );
     }, INTERVAL_BETWEEN_MOVES_MS);
   }
@@ -229,12 +237,15 @@ class App extends Component {
       <div>
         Hero: {hero.x}, {hero.y}, {hero.dir}
       </div>
-    ) : <div>Hero: dead</div>;
+    ) : (
+      <div>Hero: dead</div>
+    );
 
   render() {
     return (
       <Fragment>
         <Canvas
+          walls={this.state.walls}
           hero={this.state.hero}
           snipes={this.state.snipes}
           bullets={this.state.bullets}

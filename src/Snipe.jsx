@@ -26,7 +26,8 @@ Snipe.propTypes = {
   snipe: PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
-    dir: PropTypes.string.isRequired
+    dir: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired.isRequired
   }).isRequired
 };
 
