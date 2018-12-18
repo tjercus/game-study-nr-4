@@ -10,7 +10,8 @@ import {
   makeBullet,
   isCollisions,
   getDirBetween,
-  correctUnitForBorderImpact
+  correctUnitForBorderImpact,
+  isShootKey
 } from "./utils";
 import {
   CANVAS_HEIGHT,
@@ -102,9 +103,8 @@ const makeNextState = (state = defaultState, action) => {
         }
       }
     });
-    // TODO figure out what to do if hero is killed
     const updatedHero = isCollisions(state.bullets, state.hero, HERO_SIZE)
-      ? { ...state.hero, x: -1000, y: -1000 }
+      ? null
       : state.hero;
     const updatedSnipes = state.snipes.map(snipe => {
       if (typeof snipe !== "undefined" && snipe !== null) {
@@ -207,8 +207,7 @@ class App extends Component {
   }
 
   keyDownHandler = evt => {
-    // TODO isShootKey(keyCode)
-    if (evt.keyCode > 40) {
+    if (isShootKey(evt.keyCode)) {
       this.setState(
         makeNextState(this.state, {
           type: HERO_SHOOT_CMD,
@@ -225,7 +224,13 @@ class App extends Component {
     }
   };
 
-  // .filter(bullet => typeof bullet !== "undefined" && bullet.dir)
+  printHeroInfo = hero =>
+    hero !== null ? (
+      <div>
+        Hero: {hero.x}, {hero.y}, {hero.dir}
+      </div>
+    ) : <div>Hero: dead</div>;
+
   render() {
     return (
       <Fragment>
@@ -246,10 +251,9 @@ class App extends Component {
           >
             toggle ricochet
           </button>
-          <div>
-            Hero: {this.state.hero.x}, {this.state.hero.y},{" "}
-            {this.state.hero.dir}
-          </div>
+
+          {this.printHeroInfo(this.state.hero)}
+
           {this.state.snipes.map((snipe, i) => {
             return typeof snipe !== "undefined" && snipe !== null ? (
               <div key={i}>

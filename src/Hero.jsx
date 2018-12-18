@@ -16,6 +16,7 @@ const Hero = props => {
       />
     );
   }
+  return null;
 };
 
 Hero.propTypes = {

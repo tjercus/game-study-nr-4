@@ -6,17 +6,20 @@ import { SNIPE_SIZE } from "./constants";
 // <polygon points="200,10 250,190 160,210" cssStyle="fill:lime;stroke:purple;stroke-width:1" />
 
 const Snipe = props => {
-  return (
-    <rect
-      x={props.snipe.x - SNIPE_SIZE / 2}
-      y={props.snipe.y - SNIPE_SIZE / 2}
-      width={SNIPE_SIZE}
-      height={SNIPE_SIZE}
-      stroke="green"
-      fill="green"
-      strokeWidth={SNIPE_SIZE}
-    />
-  );
+  if (typeof props.snipe !== "undefined" && props.snipe !== null) {
+    return (
+      <rect
+        x={props.snipe.x - SNIPE_SIZE / 2}
+        y={props.snipe.y - SNIPE_SIZE / 2}
+        width={SNIPE_SIZE}
+        height={SNIPE_SIZE}
+        stroke="green"
+        fill="green"
+        strokeWidth={SNIPE_SIZE}
+      />
+    );
+  }
+  return null;
 };
 
 Snipe.propTypes = {

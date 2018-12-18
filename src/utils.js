@@ -327,7 +327,7 @@ export const distance = (rect1, rect2) => {
  * @returns {string|boolean} direction or false if not seen
  */
 export const getDirBetween = (unit, hero) => {
-  if (unit && distance(unit, hero) < 200) {
+  if (unit && hero && distance(unit, hero) < 200) {
     if (unit.y > hero.y && unit.x === hero.x) {
       return Directions.NORTH;
     }
@@ -355,3 +355,5 @@ export const getDirBetween = (unit, hero) => {
   }
   return false;
 };
+
+export const isShootKey = keyCode => keyCode > 40;
