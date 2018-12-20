@@ -44,7 +44,8 @@ export const makeNextState = (state, action) => {
         );
         if (
           !isCollision(state.hero, bullet, HERO_SIZE) &&
-          !isCollisions(state.snipes, bullet, SNIPE_SIZE)
+          !isCollisions(state.snipes, bullet, SNIPE_SIZE) &&
+          !isCollisions(state.wallPoints, bullet, SNIPE_SIZE)
         ) {
           let correctedUnit = state.settings.ricochet
             ? correctUnitBeyondBorderPosition(
@@ -99,11 +100,11 @@ export const makeNextState = (state, action) => {
             /** @type Point */ { x: snipe.x, y: snipe.y },
             PX_PER_MOVE
           );
-          console.log("wallPoints", state.wallPoints);
+          // console.log("wallPoints", state.wallPoints);
           if (
             isCollision(state.hero, nextPoint, HERO_SIZE * 2) ||
             isCollisions(state.snipes, nextPoint, SNIPE_SIZE * 2) ||
-            isCollisions(state.wallPoints, nextPoint, SNIPE_SIZE)
+            isCollisions(state.wallPoints, nextPoint, SNIPE_SIZE * 2)
           ) {
             nextPoint = { x: snipe.x, y: snipe.y }; // TODO makePoint(snipe);
           }
