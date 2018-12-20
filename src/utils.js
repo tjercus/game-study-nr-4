@@ -357,3 +357,27 @@ export const getDirBetween = (unit, hero) => {
 };
 
 export const isShootKey = keyCode => keyCode > 40;
+
+/**
+ * Calculate the points which amount to a horizontal or vertical wall/line
+ * @param {Wall} wall
+ * @returns {Array<Point>} points
+ */
+export const calculatePointsForLine = wall => {
+  const {x1, y1, x2, y2} = wall;
+  const points = [];
+  // dir: horizontal
+  if (y1 === y2) {
+    for (let i = x1; i < (x2 + 1); i++) {
+      points.push({x: i, y: y1});
+    }
+  }
+  // dir: vertical
+  if (x1 === x2) {
+    for (let i = y1; i < (y2 + 1); i++) {
+      points.push({x: x1, y: i});
+    }
+  }
+  console.log("calculatePointsForLine", wall, points);
+  return points;
+};
