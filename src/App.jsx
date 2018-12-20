@@ -27,23 +27,24 @@ const defaultState = {
     id: uuidv4()
   },
   snipes: [
-    { x: 100, y: 100, dir: Directions.SOUTH, id: uuidv4() },
-    { x: 200, y: 200, dir: Directions.NORTH, id: uuidv4() },
+    { x: 110, y: 110, dir: Directions.SOUTH, id: uuidv4() },
+    { x: 220, y: 220, dir: Directions.NORTH, id: uuidv4() },
     {
-      x: CANVAS_WIDTH - 100,
-      y: CANVAS_WIDTH - 100,
+      x: CANVAS_WIDTH - 120,
+      y: CANVAS_WIDTH - 120,
       dir: Directions.EAST,
       id: uuidv4()
     },
     {
-      x: CANVAS_WIDTH - 200,
-      y: CANVAS_WIDTH - 200,
+      x: CANVAS_WIDTH - 220,
+      y: CANVAS_WIDTH - 220,
       dir: Directions.WEST,
       id: uuidv4()
     }
   ],
   bullets: [],
-  walls: [], // for svg painting and collision detection
+  walls: [], // for svg painting
+  wallPoints: [], // for collision detection
   settings: { ricochet: false }
 };
 

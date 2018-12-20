@@ -1,4 +1,3 @@
-
 import {
   correctUnitBeyondBorderPosition,
   createRandomDir,
@@ -49,17 +48,17 @@ export const makeNextState = (state, action) => {
         ) {
           let correctedUnit = state.settings.ricochet
             ? correctUnitBeyondBorderPosition(
-              { ...bullet, ...nextPoint },
-              BULLET_SIZE,
-              CANVAS_WIDTH,
-              CANVAS_HEIGHT
-            )
+                { ...bullet, ...nextPoint },
+                BULLET_SIZE,
+                CANVAS_WIDTH,
+                CANVAS_HEIGHT
+              )
             : correctUnitForBorderImpact(
-              { ...bullet, ...nextPoint },
-              BULLET_SIZE,
-              CANVAS_WIDTH,
-              CANVAS_HEIGHT
-            );
+                { ...bullet, ...nextPoint },
+                BULLET_SIZE,
+                CANVAS_WIDTH,
+                CANVAS_HEIGHT
+              );
           let finalBullet = {
             ...bullet,
             ...nextPoint,
@@ -100,10 +99,11 @@ export const makeNextState = (state, action) => {
             /** @type Point */ { x: snipe.x, y: snipe.y },
             PX_PER_MOVE
           );
+          console.log("wallPoints", state.wallPoints);
           if (
             isCollision(state.hero, nextPoint, HERO_SIZE * 2) ||
-            isCollisions(state.snipes, nextPoint, SNIPE_SIZE * 2)
-            // || isCollisions(state.walls.map(wall => [...wall.points]), nextPoint, SNIPE_SIZE * 2)
+            isCollisions(state.snipes, nextPoint, SNIPE_SIZE * 2) ||
+            isCollisions(state.wallPoints, nextPoint, SNIPE_SIZE)
           ) {
             nextPoint = { x: snipe.x, y: snipe.y }; // TODO makePoint(snipe);
           }
@@ -158,10 +158,16 @@ export const makeNextState = (state, action) => {
   if (CREATE_WALLS_CMD === action.type) {
     const wall0 = { x1: 0, y1: 100, x2: 500, y2: 100 };
     const wall1 = { x1: 200, y1: 100, x2: 200, y2: 500 };
-    wall0.points = calculatePointsForLine(wall0);
-    wall1.points = calculatePointsForLine(wall1);
     const updatedWalls = [wall0, wall1];
-    return { ...state, walls: updatedWalls };
+
+    // const freshWallPoints = state.walls.reduce(function(accumulator, wall) {
+    //   return [...accumulator, calculatePointsForLine(wall)];
+    // }, []);
+    const freshWallPoints = [];
+    freshWallPoints.push(...calculatePointsForLine(wall0));
+    freshWallPoints.push(...calculatePointsForLine(wall1));
+
+    return { ...state, walls: updatedWalls, wallPoints: freshWallPoints };
   }
   return state;
 };
