@@ -137,14 +137,10 @@ export const makeNextState = (state, action) => {
     return { ...state, snipes: updatedSnipes, bullets: updatedBullets };
   }
   if (MOVE_HERO_CMD === action.type) {
-    const prevPoint = /** @type Point */ { x: state.hero.x, y: state.hero.y };
+    const prevPoint =
+      state.hero !== null ? { x: state.hero.x, y: state.hero.y } : null;
     const nextPoint = createNextPoint(action.dir, prevPoint, PX_PER_MOVE);
-    const updatedHero = moveHero(
-      state.hero,
-      state.snipes,
-      prevPoint,
-      nextPoint
-    );
+    const updatedHero = moveHero(state.hero, state.snipes, nextPoint);
     return { ...state, hero: updatedHero };
   }
   if (HERO_SHOOT_CMD === action.type) {

@@ -137,6 +137,9 @@ export const correctUnitForBorderImpact = (
  * @returns {Point} a new Point
  */
 export const createNextPoint = (dir, prevPoint, nrOfPixels) => {
+  if (prevPoint === null) {
+    return null;
+  }
   const nextPoint = /** @type Point */ { ...prevPoint };
   switch (dir) {
     case Directions.NORTH:
@@ -181,11 +184,13 @@ export const createNextPoint = (dir, prevPoint, nrOfPixels) => {
  *
  * @param {Hero} hero
  * @param {Array<Snipe>} snipes
- * @param {Point} prevPoint
  * @param {Point} nextPoint
  * @returns {Hero} updated hero
  */
-export const moveHero = (hero, snipes, prevPoint, nextPoint) => {
+export const moveHero = (hero, snipes, nextPoint) => {
+  if (hero === null || nextPoint === null) {
+    return null;
+  }
   const movedHero = /** @type Hero */ { ...hero };
   if (!isCollisions(snipes, nextPoint, HERO_SIZE)) {
     movedHero.x = nextPoint.x;
@@ -364,18 +369,18 @@ export const isShootKey = keyCode => keyCode > 40;
  * @returns {Array<Point>} points
  */
 export const calculatePointsForLine = wall => {
-  const {x1, y1, x2, y2} = wall;
+  const { x1, y1, x2, y2 } = wall;
   const points = [];
   // dir: horizontal
   if (y1 === y2) {
-    for (let i = x1; i < (x2 + 1); i++) {
-      points.push({x: i, y: y1});
+    for (let i = x1; i < x2 + 1; i++) {
+      points.push({ x: i, y: y1 });
     }
   }
   // dir: vertical
   if (x1 === x2) {
-    for (let i = y1; i < (y2 + 1); i++) {
-      points.push({x: x1, y: i});
+    for (let i = y1; i < y2 + 1; i++) {
+      points.push({ x: x1, y: i });
     }
   }
   console.log("calculatePointsForLine", wall, points);
