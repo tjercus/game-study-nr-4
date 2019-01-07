@@ -5,7 +5,8 @@ import {
   Directions,
   DirectionsArray,
   HERO_SIZE,
-  MoveKeys
+  MoveKeys,
+  SNIPE_SIZE
 } from "./constants";
 
 /**
@@ -45,7 +46,7 @@ export const createRandomDir = () => {
  * @param {Point} point - where the unit is
  * @returns {string} opposite dir
  */
-const createOppositeDir = (dir, point) => {
+export const createOppositeDir = (dir, point) => {
   if (dir === Directions.NORTH) {
     return Directions.SOUTH;
   }
@@ -81,40 +82,28 @@ const createOppositeDir = (dir, point) => {
 };
 
 /**
- * Corrects a units position and direction given the borders of a field
+ * Corrects a units position and direction given the collidables
  *  the rule is that there is no pacman/snipes like 'round-going', so a unit
  *  cannot cross the borders. Instead it will 'bounce' or reverse it's direction
  * @param {Unit} unit - the moving subject, can be Snipe or Hero or Bullet
  * @param {number} unitSize - int
- * @param {number} fieldWidth
- * @param {number} fieldHeight
+ * @param {Array<Unit>} collidables - walls, snipes, heros (anything you cannot cross)
+ * @param {function} modifierFn - alters the unit on collission
  * @returns {Unit} modified subject
  */
-export const correctUnitBeyondBorderPosition = (
+export const correctUnitPosition = (
   unit,
   unitSize,
-  fieldWidth,
-  fieldHeight
+  collidables,
+  modifierFn = unit => unit // TODO rename collisionHandler ?
 ) => {
-  const prevUnit = { ...unit };
-  if (unit.x >= fieldWidth - unitSize / 2) {
-    unit.x = fieldWidth - (unitSize / 2) * 2;
-    unit.dir = createOppositeDir(unit.dir, prevUnit); // TODO use makePoint
-  } else if (unit.x <= 0) {
-    unit.x = unitSize;
-    unit.dir = createOppositeDir(unit.dir, prevUnit);
-  }
-  if (unit.y >= fieldHeight - unitSize / 2) {
-    unit.y = fieldHeight - (unitSize / 2) * 2;
-    unit.dir = createOppositeDir(unit.dir, prevUnit);
-  } else if (unit.y <= 0) {
-    unit.y = unitSize;
-    unit.dir = createOppositeDir(unit.dir, prevUnit);
+  if (isCollisions(collidables, { x: unit.x, y: unit.y }, unitSize * 1.5)) {
+    return modifierFn(unit);
   }
   return unit;
 };
 
-export const correctUnitForBorderImpact = (
+export const correctUnitForWallImpact = (
   unit,
   unitSize,
   fieldWidth,
@@ -183,24 +172,26 @@ export const createNextPoint = (dir, prevPoint, nrOfPixels) => {
 /**
  *
  * @param {Hero} hero
- * @param {Array<Snipe>} snipes
+ * @param {Array<Unit>} collidables
  * @param {Point} nextPoint
  * @returns {Hero} updated hero
  */
-export const moveHero = (hero, snipes, nextPoint) => {
+export const moveHero = (hero, collidables, nextPoint) => {
   if (hero === null || nextPoint === null) {
     return null;
   }
-  const movedHero = /** @type Hero */ { ...hero };
-  if (!isCollisions(snipes, nextPoint, HERO_SIZE)) {
-    movedHero.x = nextPoint.x;
-    movedHero.y = nextPoint.y;
-  }
-  return /** @type Hero */ correctUnitBeyondBorderPosition(
+  const movedHero = /** @type Hero */ {
+    ...hero,
+    x: nextPoint.x,
+    y: nextPoint.y
+  };
+  return /** @type Hero */ correctUnitPosition(
     movedHero,
     HERO_SIZE,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT
+    collidables
+    // hero => {
+    //   return hero;
+    // }
   );
 };
 

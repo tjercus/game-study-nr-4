@@ -2,9 +2,7 @@ import React, { Component, Fragment } from "react";
 import Canvas from "./Canvas";
 import "./App.css";
 import { makeNextState } from "./reducer";
-import {
-   isShootKey,
-} from "./utils";
+import { isShootKey } from "./utils";
 import {
   CANVAS_WIDTH,
   Directions,
@@ -85,7 +83,7 @@ class App extends Component {
   };
 
   printHeroInfo = hero =>
-    hero !== null ? (
+    typeof hero !== "undefined" && hero !== null ? (
       <div>
         Hero: {hero.x}, {hero.y}, {hero.dir}
       </div>

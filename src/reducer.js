@@ -1,5 +1,5 @@
 import {
-  correctUnitBeyondBorderPosition,
+  correctUnitPosition,
   createRandomDir,
   moveHero,
   createNextPoint,
@@ -7,8 +7,9 @@ import {
   makeBullet,
   isCollisions,
   getDirBetween,
-  correctUnitForBorderImpact,
-  calculatePointsForLine
+  correctUnitForWallImpact,
+  calculatePointsForLine,
+  createOppositeDir
 } from "./utils";
 import {
   CANVAS_HEIGHT,
@@ -42,38 +43,46 @@ export const makeNextState = (state, action) => {
           /** @type Point */ { x: bullet.x, y: bullet.y },
           PX_PER_MOVE
         );
-        if (
-          !isCollision(state.hero, bullet, HERO_SIZE) &&
-          !isCollisions(state.snipes, bullet, SNIPE_SIZE) &&
-          !isCollisions(state.wallPoints, bullet, SNIPE_SIZE)
-        ) {
-          let correctedUnit = state.settings.ricochet
-            ? correctUnitBeyondBorderPosition(
-                { ...bullet, ...nextPoint },
-                BULLET_SIZE,
-                CANVAS_WIDTH,
-                CANVAS_HEIGHT
-              )
-            : correctUnitForBorderImpact(
-                { ...bullet, ...nextPoint },
-                BULLET_SIZE,
-                CANVAS_WIDTH,
-                CANVAS_HEIGHT
-              );
-          let finalBullet = {
-            ...bullet,
-            ...nextPoint,
-            ...correctedUnit
-          };
-          if (finalBullet.x > 0 && finalBullet.y > 0) {
-            return finalBullet;
+        return correctUnitPosition(
+          { ...bullet, ...nextPoint },
+          BULLET_SIZE,
+          [state.hero, ...state.snipes, ...state.wallPoints],
+          () => {
+            return null; // nullify bullet on impact
           }
-        }
+        );
+
+        // if (
+        //   !isCollision(state.hero, bullet, HERO_SIZE) &&
+        //   !isCollisions(state.snipes, bullet, SNIPE_SIZE) &&
+        //   !isCollisions(state.wallPoints, bullet, SNIPE_SIZE)
+        // ) {
+        //   let correctedUnit = state.settings.ricochet
+        //     ? correctUnitPosition(
+        //         { ...bullet, ...nextPoint },
+        //         BULLET_SIZE
+        //       )
+        //     : correctUnitForWallImpact(
+        //         { ...bullet, ...nextPoint },
+        //         BULLET_SIZE,
+        //         CANVAS_WIDTH,
+        //         CANVAS_HEIGHT
+        //       );
+        //   let finalBullet = {
+        //     ...bullet,
+        //     ...nextPoint,
+        //     ...correctedUnit
+        //   };
+        //   if (finalBullet.x > 0 && finalBullet.y > 0) {
+        //     return finalBullet;
+        //   }
+        // }
       }
     });
     const updatedHero = isCollisions(state.bullets, state.hero, HERO_SIZE)
       ? null
       : state.hero;
+    if (updatedHero === null) console.warn("hero was nulled by bullet");
     const updatedSnipes = state.snipes.map(snipe => {
       if (typeof snipe !== "undefined" && snipe !== null) {
         if (!isCollisions(state.bullets, snipe, SNIPE_SIZE * 2)) {
@@ -81,12 +90,14 @@ export const makeNextState = (state, action) => {
         }
       }
     });
-    return {
+    const out = {
       ...state,
       bullets: updatedBullets,
       snipes: updatedSnipes,
       hero: updatedHero
     };
+    if (updatedHero === null) console.log("out", out);
+    return out;
   }
   if (MOVE_SNIPES_CMD === action.type) {
     const updatedSnipes = state.snipes.map(
@@ -95,28 +106,29 @@ export const makeNextState = (state, action) => {
           if (state.nrOfMoves % DIRECTION_LIMIT === 0) {
             snipe.dir = createRandomDir();
           }
-          let nextPoint = createNextPoint(
-            snipe.dir,
-            /** @type Point */ { x: snipe.x, y: snipe.y },
-            PX_PER_MOVE
-          );
-          // console.log("wallPoints", state.wallPoints);
-          if (
-            isCollision(state.hero, nextPoint, HERO_SIZE * 2) ||
-            isCollisions(state.snipes, nextPoint, SNIPE_SIZE * 2) ||
-            isCollisions(state.wallPoints, nextPoint, SNIPE_SIZE * 2)
-          ) {
-            nextPoint = { x: snipe.x, y: snipe.y }; // TODO makePoint(snipe);
-          }
+          let prevPoint = /** @type Point */ { x: snipe.x, y: snipe.y };
+          let nextPoint = createNextPoint(snipe.dir, prevPoint, PX_PER_MOVE);
 
           return /** @type Snipe */ {
             ...snipe,
             ...nextPoint,
-            ...correctUnitBeyondBorderPosition(
+            ...correctUnitPosition(
               /** @type Snipe */ { ...snipe, ...nextPoint },
               SNIPE_SIZE,
-              CANVAS_WIDTH,
-              CANVAS_HEIGHT
+              [
+                ...state.wallPoints,
+                ...state.bullets,
+                ...state.snipes,
+                state.hero
+              ],
+              snipe => {
+                // console.log("collisionHandler snipe collided with something");
+                const updatedSnipe = {};
+                updatedSnipe.x = prevPoint.x;
+                updatedSnipe.y = prevPoint.y;
+                updatedSnipe.dir = createOppositeDir(snipe.dir, nextPoint);
+                return updatedSnipe;
+              }
             )
           };
         }
@@ -140,7 +152,11 @@ export const makeNextState = (state, action) => {
     const prevPoint =
       state.hero !== null ? { x: state.hero.x, y: state.hero.y } : null;
     const nextPoint = createNextPoint(action.dir, prevPoint, PX_PER_MOVE);
-    const updatedHero = moveHero(state.hero, state.snipes, nextPoint);
+    const updatedHero = moveHero(
+      state.hero,
+      [...state.wallPoints, ...state.bullets, ...state.snipes],
+      nextPoint
+    );
     return { ...state, hero: updatedHero };
   }
   if (HERO_SHOOT_CMD === action.type) {
@@ -153,16 +169,32 @@ export const makeNextState = (state, action) => {
     return { ...state, settings: updatedSettings };
   }
   if (CREATE_WALLS_CMD === action.type) {
-    const wall0 = { x1: 0, y1: 100, x2: 500, y2: 100 };
-    const wall1 = { x1: 200, y1: 100, x2: 200, y2: 500 };
-    const updatedWalls = [wall0, wall1];
+    const wall0 = { x1: 0, y1: 0, x2: CANVAS_WIDTH, y2: 0 };
+    const wall1 = { x1: 0, y1: 0, x2: 0, y2: CANVAS_HEIGHT };
+    const wall2 = {
+      x1: 0,
+      y1: CANVAS_HEIGHT,
+      x2: CANVAS_WIDTH,
+      y2: CANVAS_HEIGHT
+    };
+    const wall3 = {
+      x1: CANVAS_WIDTH,
+      y1: 0,
+      x2: CANVAS_WIDTH,
+      y2: CANVAS_HEIGHT
+    };
 
-    // const freshWallPoints = state.walls.reduce(function(accumulator, wall) {
-    //   return [...accumulator, calculatePointsForLine(wall)];
-    // }, []);
+    const wall4 = { x1: 0, y1: 100, x2: 500, y2: 100 };
+    const wall5 = { x1: 200, y1: 100, x2: 200, y2: 500 };
+    const updatedWalls = [wall0, wall1, wall2, wall3, wall4, wall5];
+
     const freshWallPoints = [];
     freshWallPoints.push(...calculatePointsForLine(wall0));
     freshWallPoints.push(...calculatePointsForLine(wall1));
+    freshWallPoints.push(...calculatePointsForLine(wall2));
+    freshWallPoints.push(...calculatePointsForLine(wall3));
+    freshWallPoints.push(...calculatePointsForLine(wall4));
+    freshWallPoints.push(...calculatePointsForLine(wall5));
 
     return { ...state, walls: updatedWalls, wallPoints: freshWallPoints };
   }
