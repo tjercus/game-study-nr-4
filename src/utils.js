@@ -240,6 +240,7 @@ export const isCollisions = (subjects, subj, subjectsSize) =>
  * @returns {Unit} bullet
  */
 export const makeBullet = (unit, unitSize, shootDir) => {
+  if (unit === null) return null;
   if (["shootUp", "north"].includes(shootDir)) {
     return {
       x: unit.x,

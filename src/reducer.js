@@ -59,8 +59,10 @@ export const makeNextState = (state, action) => {
         : state.hero;
     const updatedSnipes = state.snipes.map(snipe => {
       if (typeof snipe !== "undefined" && snipe !== null) {
-        if (!isCollisions(state.bullets, snipe, SNIPE_SIZE * 2)) {
+        if (!isCollisions(state.bullets, snipe, SNIPE_SIZE * 2.5)) {
           return snipe;
+        } else {
+          console.log("collision bullet versus snipe");
         }
       }
     });
@@ -123,7 +125,7 @@ export const makeNextState = (state, action) => {
     const prevPoint =
       state.hero !== null ? { x: state.hero.x, y: state.hero.y } : null;
     const nextPoint = createNextPoint(action.dir, prevPoint, PX_PER_MOVE);
-    console.log("moveHero", prevPoint, nextPoint);
+    // console.log("moveHero", prevPoint, nextPoint);
     const updatedHero = moveHero(
       state.hero,
       [...state.wallPoints, ...state.snipes],
