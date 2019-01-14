@@ -61,8 +61,6 @@ export const makeNextState = (state, action) => {
       if (typeof snipe !== "undefined" && snipe !== null) {
         if (!isCollisions(state.bullets, snipe, SNIPE_SIZE * 2.5)) {
           return snipe;
-        } else {
-          console.log("collision bullet versus snipe");
         }
       }
     });
@@ -160,15 +158,24 @@ export const makeNextState = (state, action) => {
 
     const wall4 = { x1: 0, y1: 100, x2: 500, y2: 100 };
     const wall5 = { x1: 200, y1: 100, x2: 200, y2: 500 };
-    const updatedWalls = [wall0, wall1, wall2, wall3, wall4, wall5];
+
+    const wall6 = { x1: 500, y1: 700, x2: 700, y2: 700 };
+    const wall7 = { x1: 100, y1: 700, x2: 400, y2: 700 };
+    const updatedWalls = [
+      wall0,
+      wall1,
+      wall2,
+      wall3,
+      wall4,
+      wall5,
+      wall6,
+      wall7
+    ];
 
     const freshWallPoints = [];
-    freshWallPoints.push(...calculatePointsForLine(wall0));
-    freshWallPoints.push(...calculatePointsForLine(wall1));
-    freshWallPoints.push(...calculatePointsForLine(wall2));
-    freshWallPoints.push(...calculatePointsForLine(wall3));
-    freshWallPoints.push(...calculatePointsForLine(wall4));
-    freshWallPoints.push(...calculatePointsForLine(wall5));
+    updatedWalls.forEach(wall =>
+      freshWallPoints.push(...calculatePointsForLine(wall))
+    );
 
     return { ...state, walls: updatedWalls, wallPoints: freshWallPoints };
   }
