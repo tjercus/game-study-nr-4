@@ -107,7 +107,7 @@ export const makeNextState = (state, action) => {
       }
     );
     const updatedBullets = /** @type Array<Unit> */ [...state.bullets];
-    // scan circle of terror and when a hero is in it: 1. decide which dir hero is, 2. shoot in dir
+    // scan circle of terror and when a hero is in it: 1. decide which dir hero is, 2. stop moving 3. shoot in dir
     state.snipes.map(_snipe => {
       if (state.nrOfMoves % SNIPE_SHOOT_INTERVAL_ === 0) {
         let dir = getDirBetween(_snipe, state.hero);
@@ -123,9 +123,10 @@ export const makeNextState = (state, action) => {
     const prevPoint =
       state.hero !== null ? { x: state.hero.x, y: state.hero.y } : null;
     const nextPoint = createNextPoint(action.dir, prevPoint, PX_PER_MOVE);
+    console.log("moveHero", prevPoint, nextPoint);
     const updatedHero = moveHero(
       state.hero,
-      [...state.wallPoints, ...state.bullets, ...state.snipes],
+      [...state.wallPoints, ...state.snipes],
       nextPoint
     );
     return { ...state, hero: updatedHero };

@@ -103,20 +103,20 @@ export const correctUnitPosition = (
   return unit;
 };
 
-export const correctUnitForWallImpact = (
-  unit,
-  unitSize,
-  fieldWidth,
-  fieldHeight
-) => {
-  const normalizedPoint = normalizePoint({ ...unit });
-  return normalizedPoint.x === 0 ||
-    normalizedPoint.x === fieldWidth ||
-    normalizedPoint.y === 0 ||
-    normalizedPoint.y === fieldHeight
-    ? { ...unit, x: 0, y: 0 }
-    : unit;
-};
+// export const correctUnitForWallImpact = (
+//   unit,
+//   unitSize,
+//   fieldWidth,
+//   fieldHeight
+// ) => {
+//   const normalizedPoint = normalizePoint({ ...unit });
+//   return normalizedPoint.x === 0 ||
+//     normalizedPoint.x === fieldWidth ||
+//     normalizedPoint.y === 0 ||
+//     normalizedPoint.y === fieldHeight
+//     ? { ...unit, x: 0, y: 0 }
+//     : unit;
+// };
 
 /**
  * Starting with prevPoint, create a new point nrOfPixels in dir
@@ -180,6 +180,7 @@ export const moveHero = (hero, collidables, nextPoint) => {
   if (hero === null || nextPoint === null) {
     return null;
   }
+  const originalHero = { ...hero };
   const movedHero = /** @type Hero */ {
     ...hero,
     x: nextPoint.x,
@@ -188,10 +189,11 @@ export const moveHero = (hero, collidables, nextPoint) => {
   return /** @type Hero */ correctUnitPosition(
     movedHero,
     HERO_SIZE,
-    collidables
-    // hero => {
-    //   return hero;
-    // }
+    collidables,
+    hero => {
+      // console.log("moveHero, there was collision", originalHero.x, originalHero.y, movedHero.x, movedHero.y);
+      return originalHero;
+    }
   );
 };
 
@@ -225,10 +227,10 @@ export const isCollision = (rect1, rect2, rectSize) => {
  * @param {number} subjectsSize
  * @returns {boolean}
  */
-export const isCollisions = (subjects, subj, subjectsSize) => subjects
+export const isCollisions = (subjects, subj, subjectsSize) =>
+  subjects
     .map(subject => isCollision(subject, subj, subjectsSize))
     .includes(true);
-
 
 /**
  * Make a bullet seen from a Unit and moving in a certain direction
