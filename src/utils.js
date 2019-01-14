@@ -225,10 +225,10 @@ export const isCollision = (rect1, rect2, rectSize) => {
  * @param {number} subjectsSize
  * @returns {boolean}
  */
-export const isCollisions = (subjects, subj, subjectsSize) =>
-  subjects
+export const isCollisions = (subjects, subj, subjectsSize) => subjects
     .map(subject => isCollision(subject, subj, subjectsSize))
     .includes(true);
+
 
 /**
  * Make a bullet seen from a Unit and moving in a certain direction

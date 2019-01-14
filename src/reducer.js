@@ -3,11 +3,9 @@ import {
   createRandomDir,
   moveHero,
   createNextPoint,
-  isCollision,
   makeBullet,
   isCollisions,
   getDirBetween,
-  correctUnitForWallImpact,
   calculatePointsForLine,
   createOppositeDir
 } from "./utils";
@@ -24,12 +22,13 @@ import {
   BULLET_SIZE,
   HERO_SIZE,
   TOGGLE_RICOCHET_CMD,
-  CREATE_WALLS_CMD
+  CREATE_WALLS_CMD,
+  SNIPE_SHOOT_INTERVAL_
 } from "./constants";
 
 /**
- * Is what is commonly known a 'reducer', but I don't like the word
- * Is NOT in utils.js, since it manipulates state
+ * makeNextState is what is commonly known a 'reducer', but I don't like the word.
+ * It is NOT in utils.js, since it manipulates state
  * @param {Object<State>} state
  * @param {Object<Action>} action - contains instructions on how to make next state
  * @returns {Object<State>} next state
@@ -51,38 +50,13 @@ export const makeNextState = (state, action) => {
             return null; // nullify bullet on impact
           }
         );
-
-        // if (
-        //   !isCollision(state.hero, bullet, HERO_SIZE) &&
-        //   !isCollisions(state.snipes, bullet, SNIPE_SIZE) &&
-        //   !isCollisions(state.wallPoints, bullet, SNIPE_SIZE)
-        // ) {
-        //   let correctedUnit = state.settings.ricochet
-        //     ? correctUnitPosition(
-        //         { ...bullet, ...nextPoint },
-        //         BULLET_SIZE
-        //       )
-        //     : correctUnitForWallImpact(
-        //         { ...bullet, ...nextPoint },
-        //         BULLET_SIZE,
-        //         CANVAS_WIDTH,
-        //         CANVAS_HEIGHT
-        //       );
-        //   let finalBullet = {
-        //     ...bullet,
-        //     ...nextPoint,
-        //     ...correctedUnit
-        //   };
-        //   if (finalBullet.x > 0 && finalBullet.y > 0) {
-        //     return finalBullet;
-        //   }
-        // }
       }
     });
-    const updatedHero = isCollisions(state.bullets, state.hero, HERO_SIZE)
-      ? null
-      : state.hero;
-    if (updatedHero === null) console.warn("hero was nulled by bullet");
+    const updatedHero =
+      state.hero === null ||
+      isCollisions(state.bullets, state.hero, HERO_SIZE * 2)
+        ? null
+        : state.hero;
     const updatedSnipes = state.snipes.map(snipe => {
       if (typeof snipe !== "undefined" && snipe !== null) {
         if (!isCollisions(state.bullets, snipe, SNIPE_SIZE * 2)) {
@@ -90,14 +64,12 @@ export const makeNextState = (state, action) => {
         }
       }
     });
-    const out = {
+    return {
       ...state,
       bullets: updatedBullets,
       snipes: updatedSnipes,
       hero: updatedHero
     };
-    if (updatedHero === null) console.log("out", out);
-    return out;
   }
   if (MOVE_SNIPES_CMD === action.type) {
     const updatedSnipes = state.snipes.map(
@@ -137,11 +109,10 @@ export const makeNextState = (state, action) => {
     const updatedBullets = /** @type Array<Unit> */ [...state.bullets];
     // scan circle of terror and when a hero is in it: 1. decide which dir hero is, 2. shoot in dir
     state.snipes.map(_snipe => {
-      if (state.nrOfMoves % 8 === 0) {
+      if (state.nrOfMoves % SNIPE_SHOOT_INTERVAL_ === 0) {
         let dir = getDirBetween(_snipe, state.hero);
         if (dir) {
-          console.log("SNIPE saw hero");
-          updatedBullets.push(makeBullet(_snipe, 20, dir));
+          updatedBullets.push(makeBullet(_snipe, HERO_SIZE, dir));
         }
       }
     });

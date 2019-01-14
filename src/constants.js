@@ -60,6 +60,7 @@ export const SNIPE_SIZE = 5;
 export const HERO_SIZE = 10;
 export const BULLET_SIZE = 3;
 export const WALL_SIZE = 3;
+export const SNIPE_SHOOT_INTERVAL_= 8;
 
 export const MOVE_SNIPES_CMD = "MOVE_SNIPES_CMD";
 export const MOVE_HERO_CMD = "MOVE_HERO_CMD";
