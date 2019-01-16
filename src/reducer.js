@@ -21,9 +21,9 @@ import {
   MOVE_BULLETS_CMD,
   BULLET_SIZE,
   HERO_SIZE,
-  TOGGLE_RICOCHET_CMD,
+  CHANGE_SETTING_CMD,
   CREATE_WALLS_CMD,
-  SNIPE_SHOOT_INTERVAL_
+  SNIPE_SHOOT_INTERVAL
 } from "./constants";
 
 /**
@@ -109,7 +109,7 @@ export const makeNextState = (state, action) => {
     const updatedBullets = /** @type Array<Unit> */ [...state.bullets];
     // scan circle of terror and when a hero is in it: 1. decide which dir hero is, 2. stop moving 3. shoot in dir
     state.snipes.map(_snipe => {
-      if (state.nrOfMoves % SNIPE_SHOOT_INTERVAL_ === 0) {
+      if (state.nrOfMoves % SNIPE_SHOOT_INTERVAL === 0) {
         let dir = getDirBetween(_snipe, state.hero);
         if (dir) {
           updatedBullets.push(makeBullet(_snipe, HERO_SIZE, dir));
@@ -135,9 +135,9 @@ export const makeNextState = (state, action) => {
     state.bullets.push(makeBullet(state.hero, HERO_SIZE, action.shootDir));
     return { ...state };
   }
-  if (TOGGLE_RICOCHET_CMD === action.type) {
+  if (CHANGE_SETTING_CMD === action.type) {
     const updatedSettings = state.settings;
-    updatedSettings.ricochet = !state.settings.ricochet;
+    updatedSettings[action.settingKey] = action.settingValue;
     return { ...state, settings: updatedSettings };
   }
   if (CREATE_WALLS_CMD === action.type) {

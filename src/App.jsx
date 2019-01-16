@@ -13,7 +13,8 @@ import {
   HERO_SHOOT_CMD,
   MOVE_BULLETS_CMD,
   TOGGLE_RICOCHET_CMD,
-  CREATE_WALLS_CMD
+  CREATE_WALLS_CMD,
+  CHANGE_SETTING_CMD
 } from "./constants";
 import uuidv4 from "uuid/v4";
 
@@ -105,7 +106,9 @@ class App extends Component {
             onClick={() => {
               this.setState(
                 makeNextState(this.state, {
-                  type: TOGGLE_RICOCHET_CMD
+                  type: CHANGE_SETTING_CMD,
+                  settingKey: "ricochet",
+                  settingValue: false
                 })
               );
             }}
