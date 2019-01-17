@@ -44,7 +44,7 @@ const defaultState = {
   bullets: [],
   walls: [], // for svg painting
   wallPoints: [], // for collision detection
-  settings: { ricochet: false }
+  settings: { ricochet: false, snipesMayShoot: false }
 };
 
 class App extends Component {
@@ -108,12 +108,25 @@ class App extends Component {
                 makeNextState(this.state, {
                   type: CHANGE_SETTING_CMD,
                   settingKey: "ricochet",
-                  settingValue: false
+                  settingValue: !this.state.settings.ricochet
                 })
               );
             }}
           >
             toggle ricochet
+          </button>
+          <button
+            onClick={() => {
+              this.setState(
+                makeNextState(this.state, {
+                  type: CHANGE_SETTING_CMD,
+                  settingKey: "snipesMayShoot",
+                  settingValue: this.state.settings.snipesMayShoot
+                })
+              );
+            }}
+          >
+            toggle snipes may shoot
           </button>
 
           {this.printHeroInfo(this.state.hero)}

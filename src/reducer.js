@@ -108,14 +108,16 @@ export const makeNextState = (state, action) => {
     );
     const updatedBullets = /** @type Array<Unit> */ [...state.bullets];
     // scan circle of terror and when a hero is in it: 1. decide which dir hero is, 2. stop moving 3. shoot in dir
-    state.snipes.map(_snipe => {
-      if (state.nrOfMoves % SNIPE_SHOOT_INTERVAL === 0) {
-        let dir = getDirBetween(_snipe, state.hero);
-        if (dir) {
-          updatedBullets.push(makeBullet(_snipe, HERO_SIZE, dir));
+    if (state.settings.snipesMayShoot) {
+      state.snipes.map(_snipe => {
+        if (state.nrOfMoves % SNIPE_SHOOT_INTERVAL === 0) {
+          let dir = getDirBetween(_snipe, state.hero);
+          if (dir) {
+            updatedBullets.push(makeBullet(_snipe, HERO_SIZE, dir));
+          }
         }
-      }
-    });
+      });
+    }
     state.nrOfMoves++;
     return { ...state, snipes: updatedSnipes, bullets: updatedBullets };
   }
