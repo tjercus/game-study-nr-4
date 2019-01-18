@@ -12,7 +12,6 @@ import {
   MOVE_HERO_CMD,
   HERO_SHOOT_CMD,
   MOVE_BULLETS_CMD,
-  TOGGLE_RICOCHET_CMD,
   CREATE_WALLS_CMD,
   CHANGE_SETTING_CMD
 } from "./constants";
@@ -121,7 +120,7 @@ class App extends Component {
                 makeNextState(this.state, {
                   type: CHANGE_SETTING_CMD,
                   settingKey: "snipesMayShoot",
-                  settingValue: this.state.settings.snipesMayShoot
+                  settingValue: !this.state.settings.snipesMayShoot
                 })
               );
             }}
