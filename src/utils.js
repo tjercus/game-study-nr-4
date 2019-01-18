@@ -358,25 +358,64 @@ export const getDirBetween = (unit, hero) => {
 export const isShootKey = keyCode => keyCode > 40;
 
 /**
+ * Calculate the points which amount to a horizontal wall/line
+ * @param {Point} startPoint
+ * @param {Point} endPoint
+ * @returns {Array<Point>} points in the line
+ */
+const makeHorizontalLinePoints = (startPoint, endPoint) => {
+  const points = [];
+  for (let i = startPoint.x; i < endPoint.x + 1; i++) {
+    points.push({x: i, y: startPoint.y});
+  }
+  return points;
+};
+
+/**
+ * Calculate the points which amount to a vertical wall/line
+ * @param {Point} startPoint
+ * @param {Point} endPoint
+ * @returns {Array<Point>} points in the line
+ */
+const makeVerticalLinePoints = (startPoint, endPoint) => {
+  const points = [];
+  for (let i = startPoint.y; i < endPoint.y + 1; i++) {
+    points.push({ x: startPoint.x, y: i });
+  }
+  console.log("makeVerticalLinePoints from", startPoint, points.length);
+  return points;
+};
+
+/**
  * Calculate the points which amount to a horizontal or vertical wall/line
  * @param {Wall} wall
  * @returns {Array<Point>} points
  */
-export const calculatePointsForLine = wall => {
+export const makeLinePoints = wall => {
   const { x1, y1, x2, y2 } = wall;
   const points = [];
-  // dir: horizontal
   if (y1 === y2) {
-    for (let i = x1; i < x2 + 1; i++) {
-      points.push({ x: i, y: y1 });
-    }
+    points.push(...makeHorizontalLinePoints({x: x1, y: y1}, {x: x2, y: y2}));
   }
-  // dir: vertical
   if (x1 === x2) {
-    for (let i = y1; i < y2 + 1; i++) {
-      points.push({ x: x1, y: i });
-    }
+    points.push(...makeVerticalLinePoints({x: x1, y: y1}, {x: x2, y: y2}));
   }
-  console.log("calculatePointsForLine", wall, points);
+  console.log("makeLinePoints", wall, points);
+  return points;
+};
+
+/**
+ * Create a U Shape width open end up for now
+ * @param {Point} point, starting from
+ * @param {number} size, square width same as height
+ * @returns {Array<Point>} the collection of points that together form the wall
+ */
+export const makeUShape = (point, size) => {
+  const points = [];
+  // draw line down from startpoint // TODO use concat?
+  points.push(...makeVerticalLinePoints(point, {x: point.x, y: point.y + size}));
+  // draw line left to right from lower left point
+  // draw line right from lower right point
+  console.log("makeUShape", points);
   return points;
 };

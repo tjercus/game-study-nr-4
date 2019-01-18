@@ -6,8 +6,8 @@ import {
   makeBullet,
   isCollisions,
   getDirBetween,
-  calculatePointsForLine,
-  createOppositeDir
+  makeLinePoints,
+  createOppositeDir, makeUShape
 } from "./utils";
 import {
   CANVAS_HEIGHT,
@@ -160,9 +160,9 @@ export const makeNextState = (state, action) => {
 
     const wall4 = { x1: 0, y1: 100, x2: 500, y2: 100 };
     const wall5 = { x1: 200, y1: 100, x2: 200, y2: 500 };
-
     const wall6 = { x1: 500, y1: 700, x2: 700, y2: 700 };
     const wall7 = { x1: 100, y1: 700, x2: 400, y2: 700 };
+
     const updatedWalls = [
       wall0,
       wall1,
@@ -171,13 +171,16 @@ export const makeNextState = (state, action) => {
       wall4,
       wall5,
       wall6,
-      wall7
+      wall7,
     ];
 
     const freshWallPoints = [];
     updatedWalls.forEach(wall =>
-      freshWallPoints.push(...calculatePointsForLine(wall))
+      freshWallPoints.push(...makeLinePoints(wall))
     );
+    console.log("freshWallPoints #1 ", freshWallPoints.length);
+    freshWallPoints.push(...makeUShape({x: 500, y: 500}, 50));
+    console.log("freshWallPoints #2 ", freshWallPoints.length);
 
     return { ...state, walls: updatedWalls, wallPoints: freshWallPoints };
   }
