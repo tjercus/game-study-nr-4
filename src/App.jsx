@@ -17,13 +17,19 @@ import {
 } from "./constants";
 import uuidv4 from "uuid/v4";
 
+/**
+ *
+ * @type State
+ */
 const defaultState = {
-  nrOfMoves: 0,
+  bullets: [],
   hero: {
     x: CANVAS_WIDTH / 2,
     y: CANVAS_WIDTH / 2,
     id: uuidv4()
   },
+  nrOfMoves: 0,
+  settings: { ricochet: false, snipesMayShoot: false },
   snipes: [
     { x: 110, y: 110, dir: Directions.SOUTH, id: uuidv4() },
     { x: 220, y: 220, dir: Directions.NORTH, id: uuidv4() },
@@ -40,10 +46,8 @@ const defaultState = {
       id: uuidv4()
     }
   ],
-  bullets: [],
   walls: [], // for svg painting
   wallPoints: [], // for collision detection
-  settings: { ricochet: false, snipesMayShoot: false }
 };
 
 class App extends Component {

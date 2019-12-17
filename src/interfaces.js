@@ -32,6 +32,17 @@
  */
 
 /**
+ * @interface State
+ * @property {Array<Bullet>} bullets
+ * @property {Hero} hero
+ * @property {number} nrOfMoves
+ * @property {Object<boolean, boolean>} settings
+ * @property {Array<Snipe>} snipes
+ * @property {Array<Wall>} walls
+ * @property {Array<Point>} wallPoints
+ */
+
+/**
  * @interface Wall
  * @property {number} x1
  * @property {number} y1
