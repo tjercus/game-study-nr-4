@@ -5,8 +5,7 @@ import {
   Directions,
   DirectionsArray,
   HERO_SIZE,
-  MoveKeys,
-  SNIPE_SIZE
+  MoveKeys
 } from "./constants";
 
 /**
@@ -190,7 +189,7 @@ export const moveHero = (hero, collidables, nextPoint) => {
     movedHero,
     HERO_SIZE,
     collidables,
-    hero => {
+    () => {
       // console.log("moveHero, there was collision", originalHero.x, originalHero.y, movedHero.x, movedHero.y);
       return originalHero;
     }
@@ -366,7 +365,7 @@ export const isShootKey = keyCode => keyCode > 40;
 const makeHorizontalLinePoints = (startPoint, endPoint) => {
   const points = [];
   for (let i = startPoint.x; i < endPoint.x + 1; i++) {
-    points.push({x: i, y: startPoint.y});
+    points.push({ x: i, y: startPoint.y });
   }
   return points;
 };
@@ -395,10 +394,12 @@ export const makeLinePoints = wall => {
   const { x1, y1, x2, y2 } = wall;
   const points = [];
   if (y1 === y2) {
-    points.push(...makeHorizontalLinePoints({x: x1, y: y1}, {x: x2, y: y2}));
+    points.push(
+      ...makeHorizontalLinePoints({ x: x1, y: y1 }, { x: x2, y: y2 })
+    );
   }
   if (x1 === x2) {
-    points.push(...makeVerticalLinePoints({x: x1, y: y1}, {x: x2, y: y2}));
+    points.push(...makeVerticalLinePoints({ x: x1, y: y1 }, { x: x2, y: y2 }));
   }
   console.log("makeLinePoints", wall, points);
   return points;
@@ -412,10 +413,19 @@ export const makeLinePoints = wall => {
  */
 export const makeUShape = (point, size) => {
   const points = [];
-  // draw line down from startpoint // TODO use concat?
-  points.push(...makeVerticalLinePoints(point, {x: point.x, y: point.y + size}));
+  // draw line down from startpoint // TODO use map
+  points.push(
+    ...makeVerticalLinePoints(point, { x: point.x, y: point.y + size })
+  );
   // draw line left to right from lower left point
   // draw line right from lower right point
   console.log("makeUShape", points);
   return points;
 };
+
+/**
+ * is a value not empty?
+ * @param value
+ * @return {boolean|boolean}
+ */
+export const hasValue = value => typeof value !== "undefined" && value !== null;

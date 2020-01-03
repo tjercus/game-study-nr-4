@@ -7,7 +7,9 @@ import {
   isCollisions,
   getDirBetween,
   makeLinePoints,
-  createOppositeDir, makeUShape
+  createOppositeDir,
+  makeUShape,
+  hasValue
 } from "./utils";
 import {
   CANVAS_HEIGHT,
@@ -36,7 +38,7 @@ import {
 export const makeNextState = (state, action) => {
   if (MOVE_BULLETS_CMD === action.type) {
     const updatedBullets = state.bullets.map(bullet => {
-      if (typeof bullet !== "undefined" && bullet !== null) {
+      if (hasValue(bullet)) {
         let nextPoint = createNextPoint(
           bullet.dir,
           /** @type Point */ { x: bullet.x, y: bullet.y },
@@ -51,6 +53,7 @@ export const makeNextState = (state, action) => {
           }
         );
       }
+      return [];
     });
     const updatedHero =
       state.hero === null ||
@@ -58,11 +61,12 @@ export const makeNextState = (state, action) => {
         ? null
         : state.hero;
     const updatedSnipes = state.snipes.map(snipe => {
-      if (typeof snipe !== "undefined" && snipe !== null) {
+      if (hasValue(snipe)) {
         if (!isCollisions(state.bullets, snipe, SNIPE_SIZE * 2.5)) {
           return snipe;
         }
       }
+      return [];
     });
     return {
       ...state,
@@ -74,7 +78,7 @@ export const makeNextState = (state, action) => {
   if (MOVE_SNIPES_CMD === action.type) {
     const updatedSnipes = state.snipes.map(
       /** @type Snipe */ snipe => {
-        if (typeof snipe !== "undefined" && snipe !== null) {
+        if (hasValue(snipe)) {
           if (state.nrOfMoves % DIRECTION_LIMIT === 0) {
             snipe.dir = createRandomDir();
           }
@@ -104,6 +108,7 @@ export const makeNextState = (state, action) => {
             )
           };
         }
+        return [];
       }
     );
     const updatedBullets = /** @type Array<Unit> */ [...state.bullets];
@@ -116,14 +121,16 @@ export const makeNextState = (state, action) => {
             updatedBullets.push(makeBullet(_snipe, HERO_SIZE, dir));
           }
         }
+        return [];
       });
     }
     state.nrOfMoves++;
     return { ...state, snipes: updatedSnipes, bullets: updatedBullets };
   }
   if (MOVE_HERO_CMD === action.type) {
-    const prevPoint =
-      state.hero !== null ? { x: state.hero.x, y: state.hero.y } : null;
+    const prevPoint = hasValue(state.hero)
+      ? { x: state.hero.x, y: state.hero.y }
+      : null;
     const nextPoint = createNextPoint(action.dir, prevPoint, PX_PER_MOVE);
     // console.log("moveHero", prevPoint, nextPoint);
     const updatedHero = moveHero(
@@ -171,15 +178,13 @@ export const makeNextState = (state, action) => {
       wall4,
       wall5,
       wall6,
-      wall7,
+      wall7
     ];
 
     const freshWallPoints = [];
-    updatedWalls.forEach(wall =>
-      freshWallPoints.push(...makeLinePoints(wall))
-    );
+    updatedWalls.forEach(wall => freshWallPoints.push(...makeLinePoints(wall)));
     console.log("freshWallPoints #1 ", freshWallPoints.length);
-    freshWallPoints.push(...makeUShape({x: 500, y: 500}, 50));
+    freshWallPoints.push(...makeUShape({ x: 500, y: 500 }, 50));
     console.log("freshWallPoints #2 ", freshWallPoints.length);
 
     return { ...state, walls: updatedWalls, wallPoints: freshWallPoints };

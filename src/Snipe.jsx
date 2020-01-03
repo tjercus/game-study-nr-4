@@ -1,12 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { SNIPE_SIZE } from "./constants";
+import { hasValue } from "./utils";
 
 // TODO example triangle shape
 // <polygon points="200,10 250,190 160,210" cssStyle="fill:lime;stroke:purple;stroke-width:1" />
 
 const Snipe = props => {
-  if (typeof props.snipe !== "undefined" && props.snipe !== null) {
+  if (hasValue(props.snipe)) {
     return (
       <rect
         x={props.snipe.x - SNIPE_SIZE / 2}

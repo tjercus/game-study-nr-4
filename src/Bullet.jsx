@@ -1,13 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { BULLET_SIZE } from "./constants";
+import { hasValue } from "./utils";
 
 const Bullet = props => {
-  if (typeof props.bullet !== "undefined" && props.bullet !== null) {
+  if (hasValue(props.bullet)) {
     return (
       <rect
-        x={props.bullet.x - (BULLET_SIZE / 2)}
-        y={props.bullet.y - (BULLET_SIZE / 2)}
+        x={props.bullet.x - BULLET_SIZE / 2}
+        y={props.bullet.y - BULLET_SIZE / 2}
         width={BULLET_SIZE}
         height={BULLET_SIZE}
         stroke="orange"
@@ -23,7 +24,7 @@ Bullet.propTypes = {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     dir: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired.isRequired,
+    id: PropTypes.string.isRequired.isRequired
   }).isRequired
 };
 

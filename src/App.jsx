@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import Canvas from "./Canvas";
 import "./App.css";
 import { makeNextState } from "./reducer";
-import { isShootKey } from "./utils";
+import { hasValue, isShootKey } from "./utils";
 import {
   CANVAS_WIDTH,
   Directions,
@@ -47,7 +47,7 @@ const defaultState = {
     }
   ],
   walls: [], // for svg painting
-  wallPoints: [], // for collision detection
+  wallPoints: [] // for collision detection
 };
 
 class App extends Component {
@@ -87,7 +87,7 @@ class App extends Component {
   };
 
   printHeroInfo = hero =>
-    typeof hero !== "undefined" && hero !== null ? (
+    hasValue(hero) ? (
       <div>
         Hero: {hero.x}, {hero.y}, {hero.dir}
       </div>
@@ -135,7 +135,7 @@ class App extends Component {
           {this.printHeroInfo(this.state.hero)}
 
           {this.state.snipes.map((snipe, i) => {
-            return typeof snipe !== "undefined" && snipe !== null ? (
+            return hasValue(snipe) ? (
               <div key={i}>
                 snipe {i}: {snipe.x}, {snipe.y}, {snipe.dir}
               </div>
@@ -143,7 +143,7 @@ class App extends Component {
           })}
 
           {this.state.bullets.map((bullet, i) => {
-            return typeof bullet !== "undefined" && bullet !== null ? (
+            return hasValue(bullet) ? (
               <div key={i}>
                 bullet {i}: {bullet.x}, {bullet.y}, {bullet.dir}
               </div>

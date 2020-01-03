@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {WALL_SIZE} from "./constants";
+import { WALL_SIZE } from "./constants";
+import { hasValue } from "./utils";
 
 const Wall = props => {
-  if (typeof props.wall !== "undefined" && props.wall !== null) {
+  if (hasValue(props.wall)) {
     return (
       <line
         x1={props.wall.x1}
@@ -22,7 +23,7 @@ Wall.propTypes = {
     x1: PropTypes.number.isRequired,
     y1: PropTypes.number.isRequired,
     x2: PropTypes.number.isRequired,
-    y2: PropTypes.number.isRequired,
+    y2: PropTypes.number.isRequired
   }).isRequired
 };
 

@@ -7,6 +7,7 @@ import Bullet from "./Bullet";
 
 import { CANVAS_HEIGHT } from "./constants";
 import Wall from "./Wall";
+import { hasValue } from "./utils";
 
 const Canvas = props => {
   const viewBox = [0, 0, CANVAS_HEIGHT, CANVAS_HEIGHT];
@@ -14,23 +15,20 @@ const Canvas = props => {
   return (
     <svg id="game-canvas" viewBox={viewBox}>
       <Hero hero={props.hero} />
-
       {props.walls.map(wall =>
-        typeof wall !== "undefined" && wall !== null ? (
-          <Wall wall={wall} key={wall.x1 + "-" + wall.y1 + "-" + wall.x2 + "-" + wall.y2} />
+        hasValue(wall) ? (
+          <Wall
+            wall={wall}
+            key={`${wall.x1}-${wall.y1}-${wall.x2}-${wall.y2}`}
+          />
         ) : null
       )}
-
+      }
       {props.bullets.map(bullet =>
-        typeof bullet !== "undefined" && bullet !== null ? (
-          <Bullet bullet={bullet} key={bullet.id} />
-        ) : null
+        hasValue(bullet) ? <Bullet bullet={bullet} key={bullet.id} /> : null
       )}
-
       {props.snipes.map(snipe =>
-        typeof snipe !== "undefined" && snipe !== null ? (
-          <Snipe snipe={snipe} key={snipe.id} />
-        ) : null
+        hasValue(snipe) ? <Snipe snipe={snipe} key={snipe.id} /> : null
       )}
     </svg>
   );
@@ -42,7 +40,7 @@ Canvas.propTypes = {
       x: PropTypes.number.isRequired,
       y: PropTypes.number.isRequired,
       dir: PropTypes.string.isRequired.isRequired,
-      id: PropTypes.string.isRequired.isRequired,
+      id: PropTypes.string.isRequired.isRequired
     })
   ).isRequired,
   hero: PropTypes.shape({
@@ -54,7 +52,7 @@ Canvas.propTypes = {
       x: PropTypes.number.isRequired,
       y: PropTypes.number.isRequired,
       dir: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired.isRequired,
+      id: PropTypes.string.isRequired.isRequired
     })
   ).isRequired,
   walls: PropTypes.arrayOf(
