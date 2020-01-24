@@ -28,7 +28,7 @@ Snipe.propTypes = {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     dir: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired.isRequired
+    id: PropTypes.string.isRequired
   }).isRequired
 };
 

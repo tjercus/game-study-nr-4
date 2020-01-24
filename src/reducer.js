@@ -53,7 +53,7 @@ export const makeNextState = (state, action) => {
           }
         );
       }
-      return [];
+      //return [];
     });
     const updatedHero =
       state.hero === null ||
@@ -66,7 +66,7 @@ export const makeNextState = (state, action) => {
           return snipe;
         }
       }
-      return [];
+      // return [];
     });
     return {
       ...state,
@@ -108,7 +108,7 @@ export const makeNextState = (state, action) => {
             )
           };
         }
-        return [];
+        // return [];
       }
     );
     const updatedBullets = /** @type Array<Unit> */ [...state.bullets];
@@ -121,7 +121,7 @@ export const makeNextState = (state, action) => {
             updatedBullets.push(makeBullet(_snipe, HERO_SIZE, dir));
           }
         }
-        return [];
+        // return [];
       });
     }
     state.nrOfMoves++;

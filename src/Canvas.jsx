@@ -39,8 +39,8 @@ Canvas.propTypes = {
     PropTypes.shape({
       x: PropTypes.number.isRequired,
       y: PropTypes.number.isRequired,
-      dir: PropTypes.string.isRequired.isRequired,
-      id: PropTypes.string.isRequired.isRequired
+      dir: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired
     })
   ).isRequired,
   hero: PropTypes.shape({
@@ -52,7 +52,7 @@ Canvas.propTypes = {
       x: PropTypes.number.isRequired,
       y: PropTypes.number.isRequired,
       dir: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired.isRequired
+      id: PropTypes.string.isRequired
     })
   ).isRequired,
   walls: PropTypes.arrayOf(
